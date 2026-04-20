@@ -43,7 +43,7 @@ if inputval.lower() == 'none':
 else:
     cluster_file = inputval
 # nieuwe import
-data = np.genfromtxt(save_path + "ngc6366_gaia_dr3_ruwe.csv", delimiter=",", names=True)
+# data = np.genfromtxt(save_path + "ngc6366_gaia_dr3_ruwe.csv", delimiter=",", names=True)
 
 
 def analysis(data, cluster_name):
@@ -237,7 +237,7 @@ print(stralen)
 cluster_names = clusters
 number_of_binaries_ruwe_list = []
 for cluster_name in cluster_names:
-    data = np.genfromtxt(save_path + "data" + cluster_name + ".csv", delimiter=",", names=True)
+    data = np.genfromtxt(save_path + "data " + cluster_name + ".csv", delimiter=",", names=True)
     number_of_binaries_ruwe = analysis(data, cluster_name)
     number_of_binaries_ruwe_list.append(number_of_binaries_ruwe)
 
