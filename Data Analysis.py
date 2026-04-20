@@ -87,32 +87,39 @@ def analysis(data, cluster_name):
     # Plotting
 
     star_indices = range(len(rv))
-    if show_plots:
-        plt.errorbar(star_indices, rv, yerr=rv_err, fmt='o', capsize=5, label='Radial Velocity with Errors')
-        plt.axhline(mean_rv, color='r', linestyle='--', label=f'Mean RV = {mean_rv:.2f} km/s')
-        # plt.fill_between(star_indices, mean_rv - std_rv, mean_rv + std_rv, color='r', alpha=0.2, label=f'±1σ = {std_rv:.2f} km/s')
-        plt.fill_between(star_indices, mean_rv - 2 * std_rv, mean_rv + 2 * std_rv, color='r', alpha=0.1,
-                        label=f'±2σ = {2 * std_rv:.2f} km/s')
-        plt.xlabel('Star Index')
-        plt.ylabel('Radial Velocity [km/s]')
-        plt.title(f'Radial Velocities of Stars in {cluster_name}')
-        plt.legend()
-        if save_plots:
-            plt.savefig(save_path + f"Figures\\RVPlots\\{cluster_name}_rv_plot.png", dpi=150)
-            print(f"Saved: {cluster_name}_rv_plot.png")
-        plt.show()
 
-        plt.scatter(star_indices, rv_err, color='orange', label='Radial Velocity Errors')
-        plt.axhline(np.mean(rv_err), color='g', linestyle='--', label=f'Mean RV Error = {np.mean(rv_err):.2f} km/s')
-        # plt.axhline(std_rv, color='b', linestyle='--', label=f'Standard Deviation of RV = {std_rv:.2f} km/s')
-        plt.xlabel('Star Index')
-        plt.ylabel('Radial Velocity Error [km/s]')
-        plt.title(f'Radial Velocity Errors of Stars in {cluster_name}')
-        plt.legend()
-        if save_plots:
-            plt.savefig(save_path + f"Figures\\RVPlots\\{cluster_name}_rv_error_plot.png", dpi=150)
-            print(f"Saved: {cluster_name}_rv_error_plot.png")
+    # plotting
+    plt.errorbar(star_indices, rv, yerr=rv_err, fmt='o', capsize=5, label='Radial Velocity with Errors')
+    plt.axhline(mean_rv, color='r', linestyle='--', label=f'Mean RV = {mean_rv:.2f} km/s')
+    # plt.fill_between(star_indices, mean_rv - std_rv, mean_rv + std_rv, color='r', alpha=0.2, label=f'±1σ = {std_rv:.2f} km/s')
+    plt.fill_between(star_indices, mean_rv - 2 * std_rv, mean_rv + 2 * std_rv, color='r', alpha=0.1,
+                    label=f'±2σ = {2 * std_rv:.2f} km/s')
+    plt.xlabel('Star Index')
+    plt.ylabel('Radial Velocity [km/s]')
+    plt.title(f'Radial Velocities of Stars in {cluster_name}')
+    plt.legend()
+    if save_plots:
+        plt.savefig(save_path + f"Figures\\RVPlots\\{cluster_name}_rv_plot.png", dpi=150)
+        print(f"Saved: {cluster_name}_rv_plot.png")
+    if show_plots:
         plt.show()
+    else:        
+        plt.close()
+
+    plt.scatter(star_indices, rv_err, color='orange', label='Radial Velocity Errors')
+    plt.axhline(np.mean(rv_err), color='g', linestyle='--', label=f'Mean RV Error = {np.mean(rv_err):.2f} km/s')
+    # plt.axhline(std_rv, color='b', linestyle='--', label=f'Standard Deviation of RV = {std_rv:.2f} km/s')
+    plt.xlabel('Star Index')
+    plt.ylabel('Radial Velocity Error [km/s]')
+    plt.title(f'Radial Velocity Errors of Stars in {cluster_name}')
+    plt.legend()
+    if save_plots:
+        plt.savefig(save_path + f"Figures\\RVPlots\\{cluster_name}_rv_error_plot.png", dpi=150)
+        print(f"Saved: {cluster_name}_rv_error_plot.png")
+    if show_plots:
+        plt.show()
+    else:
+        plt.close()
 
     # Star_indices with RV flagged binaries:
     valid_indices = np.where(~np.isnan(rv_original))[0]
@@ -156,20 +163,23 @@ def analysis(data, cluster_name):
     binary_candidates_RUWE = ruwe[mask]
     number_of_binaries_RUWE = len(binary_candidates_RUWE)
 
+    
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.hist(ruwe, bins=60, color="steelblue", edgecolor="none", alpha=0.8)
+    ax.axvline(RUWE_threshold, color="red", lw=1.5, ls="--", label=f"RUWE-threshold = {RUWE_threshold}")
+    ax.set_xlabel("RUWE")
+    ax.set_ylabel("Aantal sterren")
+    ax.set_title(f"RUWE-verdeling — {cluster_name} (3D bol)")
+    ax.set_xscale("log")
+    ax.legend()
+    plt.tight_layout()
+    if save_plots:
+        plt.savefig(save_path + f"Figures\\RUWEPlots\\{cluster_name}_ruwe_hist.png", dpi=150)
+        print(f"Saved: {cluster_name}_ruwe_hist.png")
     if show_plots:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.hist(ruwe, bins=60, color="steelblue", edgecolor="none", alpha=0.8)
-        ax.axvline(RUWE_threshold, color="red", lw=1.5, ls="--", label=f"RUWE-threshold = {RUWE_threshold}")
-        ax.set_xlabel("RUWE")
-        ax.set_ylabel("Aantal sterren")
-        ax.set_title(f"RUWE-verdeling — {cluster_name} (3D bol)")
-        ax.set_xscale("log")
-        ax.legend()
-        plt.tight_layout()
-        if save_plots:
-            plt.savefig(save_path + f"Figures\\RUWEPlots\\{cluster_name}_ruwe_hist.png", dpi=150)
-            print(f"Saved: {cluster_name}_ruwe_hist.png")
         plt.show()
+    else:
+        plt.close()
 
     indices_RUWE_flagged = np.where(mask)[0]
     common_stars = np.intersect1d(indices_RV_flagged, indices_RUWE_flagged)
