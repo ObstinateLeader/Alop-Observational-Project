@@ -20,7 +20,7 @@ if inputval.lower() == 'none' or inputval.lower() == 'data':
 else:
     save_path = inputval
 inputval = input('Save plots? (Y/N): ').lower()
-if inputval == 'y':
+if inputval.lower() == 'y':
     save_plots = True
 else:
     save_plots = False
