@@ -287,10 +287,20 @@ print("-----------------------------------------------")
 
 print("\n--------------------Mean Fractions--------------------")
 
-print(f'RUWE Fraction: {np.mean(ruwe_fractions):.4f} ± {np.std(ruwe_fractions):.4f}')
-print(f'RV Fraction: {np.mean(RV_fractions):.4f} ± {np.std(RV_fractions):.4f}')
-print(f'Combined Fraction: {np.mean(combined_fractions):.4f} ± {np.std(combined_fractions):.4f}')
-print(f'Total Unique Fraction: {np.mean(total_unique_fractions):.4f} ± {np.std(total_unique_fractions):.4f}')
+ruwe_fractions = np.array(ruwe_fractions)
+ruwe_fractions[ruwe_fractions == 0] = np.nan
+RV_fractions = np.array(RV_fractions)
+RV_fractions[RV_fractions == 0] = np.nan
+combined_fractions = np.array(combined_fractions)
+combined_fractions[combined_fractions == 0] = np.nan
+total_unique_fractions = np.array(total_unique_fractions)
+total_unique_fractions[total_unique_fractions == 0] = np.nan
+
+
+print(f'RUWE Fraction: {np.nanmean(ruwe_fractions):.4f} ± {np.nanstd(ruwe_fractions):.4f}')
+print(f'RV Fraction: {np.nanmean(RV_fractions):.4f} ± {np.nanstd(RV_fractions):.4f}')
+print(f'Combined Fraction: {np.nanmean(combined_fractions):.4f} ± {np.nanstd(combined_fractions):.4f}')
+print(f'Total Unique Fraction: {np.nanmean(total_unique_fractions):.4f} ± {np.nanstd(total_unique_fractions):.4f}')
 
 
 
