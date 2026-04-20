@@ -20,7 +20,7 @@ if inputval.lower() == 'none' or inputval.lower() == 'data':
 else:
     save_path = inputval
 inputval = input('Save plots? (Y/N): ').lower()
-if inputval.lower() == 'y':
+if inputval == 'y':
     save_plots = True
 else:
     save_plots = False
@@ -34,7 +34,7 @@ afstanden = []
 ra_list = []
 dec_list = []
 stralen = []
-
+print(show_plots, save_plots)
 with open(cluster_file, newline="") as f:
     reader = csv.DictReader(f)
     for row in reader:
@@ -132,35 +132,39 @@ for index, cluster in enumerate(clusters):
     ruwe        = df_clean['ruwe']
 
     # %% Sky map gekleurd op radiale snelheid
+    fig, ax = plt.subplots(figsize=(7, 6))
+    sc = ax.scatter(df_clean["ra"], df_clean["dec"],
+                    c=df_clean["radial_velocity"], cmap="coolwarm",
+                    s=8, alpha=0.8, linewidths=0)
+    ax.invert_xaxis()
+    ax.set_xlabel("RA [deg]")
+    ax.set_ylabel("Dec [deg]")
+    ax.set_title(f"Map of imported stars of {cluster}\n(RUWE < 1.6)")
+    fig.colorbar(sc, ax=ax, label="Radial velocity [km s$^{-1}$]")
+    plt.tight_layout()
+    if save_plots:
+        plt.savefig(save_path + f"Figures\\SkyPlots\\{cluster}_skyplot_ruwe.png", dpi=150)
+        print(f"Saved: {cluster}_skyplot_ruwe.png")
     if show_plots:
-        fig, ax = plt.subplots(figsize=(7, 6))
-        sc = ax.scatter(df_clean["ra"], df_clean["dec"],
-                        c=df_clean["radial_velocity"], cmap="coolwarm",
-                        s=8, alpha=0.8, linewidths=0)
-        ax.invert_xaxis()
-        ax.set_xlabel("RA [deg]")
-        ax.set_ylabel("Dec [deg]")
-        ax.set_title(f"Map of imported stars of {cluster}\n(RUWE < 1.6)")
-        fig.colorbar(sc, ax=ax, label="Radial velocity [km s$^{-1}$]")
-        plt.tight_layout()
-        if save_plots:
-            plt.savefig(save_path + f"Figures\\SkyPlots\\{cluster}_skyplot_ruwe.png", dpi=150)
-            print(f"Saved: {cluster}_skyplot_ruwe.png")
         plt.show()
+    else:
+        plt.close()
 
     # %% RUWE verdeling
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.hist(df["ruwe"].dropna(), bins=60, color="steelblue", edgecolor="none", alpha=0.8)
+    # ax.axvline(RUWE_MAX, color="red", lw=1.5, ls="--", label=f"RUWE = {RUWE_MAX}")
+    ax.set_xlabel("RUWE")
+    ax.set_ylabel("Number of Stars")
+    ax.set_title(f"RUWE-distribution — {cluster} (3D sphere)")
+    ax.legend()
+    plt.tight_layout()
+    if save_plots:
+        plt.savefig(save_path + f"Figures\\RUWEImportPlots\\{cluster}_ruwe_hist.png", dpi=150)
+        print(f"Saved: {cluster}_ruwe_hist.png")
     if show_plots:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.hist(df["ruwe"].dropna(), bins=60, color="steelblue", edgecolor="none", alpha=0.8)
-        # ax.axvline(RUWE_MAX, color="red", lw=1.5, ls="--", label=f"RUWE = {RUWE_MAX}")
-        ax.set_xlabel("RUWE")
-        ax.set_ylabel("Number of Stars")
-        ax.set_title(f"RUWE-distribution — {cluster} (3D sphere)")
-        ax.legend()
-        plt.tight_layout()
-        if save_plots:
-            plt.savefig(save_path + f"Figures\\RUWEImportPlots\\{cluster}_ruwe_hist.png", dpi=150)
-            print(f"Saved: {cluster}_ruwe_hist.png")
         plt.show()
+    else:
+        plt.close()
 
 print("\nFinished importing all clusters.")
