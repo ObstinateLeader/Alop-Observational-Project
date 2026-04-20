@@ -275,6 +275,7 @@ for cluster_name in cluster_names:
 
 
 
+
 print("----------------Final Results------------------")
 for index, cluster_name in enumerate(cluster_names):
     print(f'\n{cluster_name}')
@@ -283,7 +284,19 @@ for index, cluster_name in enumerate(cluster_names):
     print(f"RV fraction: {RV_fractions[index]:.4f}")
     print(f"Combined fraction: {combined_fractions[index]:.4f}")
     print(f"Total unique fraction: {total_unique_fractions[index]:.4f}")
-print("-----------------------------------------------")
+
+# NGC 6366
+save_plots = False
+data_6366 = np.genfromtxt("Data\\Globular\\data NGC 6366.csv", delimiter=",", names=True)
+number_of_binaries_ruwe_6366, ruwe_fraction_6366, RV_fraction_6366, combined_fraction_6366, total_unique_fraction_6366 = analysis(data_6366, "NGC6366")
+print("\n------ NGC 6366 Analysis Results------")
+print(f"Number of binaries: {number_of_binaries_ruwe_6366}")
+print(f"RUWE fraction: {ruwe_fraction_6366:.4f}")
+print(f"RV fraction: {RV_fraction_6366:.4f}")
+print(f"Combined fraction: {combined_fraction_6366:.4f}")
+print(f"Total unique fraction: {total_unique_fraction_6366:.4f}")
+
+
 
 print("\n--------------------Mean Fractions--------------------")
 
@@ -302,6 +315,7 @@ print(f'RV Fraction: {np.nanmean(RV_fractions):.4f} ± {np.nanstd(RV_fractions):
 print(f'Combined Fraction: {np.nanmean(combined_fractions):.4f} ± {np.nanstd(combined_fractions):.4f}')
 print(f'Total Unique Fraction: {np.nanmean(total_unique_fractions):.4f} ± {np.nanstd(total_unique_fractions):.4f}')
 
+print("-----------------------------------------------")
 
 
 plt.ioff()
