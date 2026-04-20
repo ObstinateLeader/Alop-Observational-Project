@@ -184,8 +184,23 @@ def analysis(data, cluster_name):
     indices_RUWE_flagged = np.where(mask)[0]
     common_stars = np.intersect1d(indices_RV_flagged, indices_RUWE_flagged)
 
+    ruwe_fraction = number_of_binaries_RUWE / len(ruwe) if len(ruwe) > 0 else 0
+    if len(rv_clean) == 0:
+        combined_fraction = 0
+    else:
+        combined_fraction = len(common_stars) / len(rv_clean)   
+
+    RV_fraction = len(indices_RV_flagged) / len(rv_clean) if len(rv_clean) > 0 else 0
+
+    total_unique_binaries = len(indices_RUWE_flagged) + len(indices_RV_flagged) - len(common_stars)
+    total_unique_fraction = total_unique_binaries / len(ruwe) if len(ruwe) > 0 else 0
+
     print("---------RUWE Analysis Results---------")
     print(f"Number of binaries: {number_of_binaries_RUWE}")
+    print(f"RUWE fraction: {ruwe_fraction:.4f}")
+    print(f"Combined fraction: {combined_fraction:.4f}")
+    print(f"Total unique fraction: {total_unique_fraction:.4f}")
+
 
     # indices flagged binaries RUWE
     # indices_RUWE_flagged = ruwe[mask]
@@ -201,7 +216,7 @@ def analysis(data, cluster_name):
     print("----------------------------------------------")
 
     # Proper motions??
-    return number_of_binaries_RUWE
+    return number_of_binaries_RUWE, ruwe_fraction, RV_fraction, combined_fraction, total_unique_fraction
 
 
 # data = np.genfromtxt("ngc6366_gaia_dr3_ruwe_andere.csv", delimiter=",", names=True)
@@ -235,15 +250,63 @@ print(stralen)
 # importing data
 # cluster_names = ["NGC6366, M45"]
 cluster_names = clusters
+# number_of_binaries_ruwe_list = []
+# for cluster_name in cluster_names:
+#     data = np.genfromtxt(save_path + "data " + cluster_name + ".csv", delimiter=",", names=True)
+#     number_of_binaries_ruwe = analysis(data, cluster_name)
+#     number_of_binaries_ruwe_list.append(number_of_binaries_ruwe)
+
 number_of_binaries_ruwe_list = []
+ruwe_fractions, RV_fractions, combined_fractions, total_unique_fractions = [], [], [], []
 for cluster_name in cluster_names:
     data = np.genfromtxt(save_path + "data " + cluster_name + ".csv", delimiter=",", names=True)
-    number_of_binaries_ruwe = analysis(data, cluster_name)
+    # data = np.genfromtxt("",  delimiter=",", names=True) # If we need a special/specific name for a csv file
+    number_of_binaries_ruwe, ruwe_fraction, RV_fraction, combined_fraction, total_unique_fraction = analysis(data, cluster_name)
     number_of_binaries_ruwe_list.append(number_of_binaries_ruwe)
+    ruwe_fractions.append(ruwe_fraction)
+    RV_fractions.append(RV_fraction)
+    print(f"Combined fraction: {combined_fraction}")
+    if combined_fraction == None:
+        combined_fractions.append(0)
+    else:
+        combined_fractions.append(combined_fraction)
+    total_unique_fractions.append(total_unique_fraction)
+
+
+
 
 print("----------------Final Results------------------")
 for index, cluster_name in enumerate(cluster_names):
-    print(f"Number of flagged binaries ruwe method: {number_of_binaries_ruwe_list[index]} from cluster {cluster_name}")
+    print(f'\n{cluster_name}')
+    print(f"Number of flagged binaries ruwe method: {number_of_binaries_ruwe_list[index]}")
+    print(f"RUWE fraction: {ruwe_fractions[index]:.4f}")
+    print(f"RV fraction: {RV_fractions[index]:.4f}")
+    print(f"Combined fraction: {combined_fractions[index]:.4f}")
+    print(f"Total unique fraction: {total_unique_fractions[index]:.4f}")
 print("-----------------------------------------------")
 
+print("\n--------------------Mean Fractions--------------------")
 
+print(f'RUWE Fraction: {np.mean(ruwe_fractions):.4f} ± {np.std(ruwe_fractions):.4f}')
+print(f'RV Fraction: {np.mean(RV_fractions):.4f} ± {np.std(RV_fractions):.4f}')
+print(f'Combined Fraction: {np.mean(combined_fractions):.4f} ± {np.std(combined_fractions):.4f}')
+print(f'Total Unique Fraction: {np.mean(total_unique_fractions):.4f} ± {np.std(total_unique_fractions):.4f}')
+
+
+
+plt.ioff()
+
+plt.figure()
+plt.bar(cluster_names, np.array(combined_fractions) * 100, label="Combined Fractions", alpha=0.3)
+plt.bar(cluster_names, np.array(RV_fractions) * 100, label="RV Fractions", alpha=0.3)
+plt.bar(cluster_names, np.array(total_unique_fractions) * 100, label="Total Unique Fractions", alpha=0.3)
+plt.bar(cluster_names, np.array(ruwe_fractions) * 100, label="Ruwe Fractions", alpha=0.3)
+plt.ylabel(f"Binary Fraction [%]")
+plt.xlabel(f"Cluster Name")
+# plt.grid()
+plt.title("Binary Fraction of Stars in Various Clusters")
+plt.gca().set_axisbelow(True)
+plt.grid(axis='y', color='gray', linestyle='dashed', alpha=0.3)
+
+plt.legend()
+plt.show()
