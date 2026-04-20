@@ -110,8 +110,8 @@ for index, cluster in enumerate(clusters):
     df_clean = df.copy()
 
     # %% Sla beide datasets op
-    df.to_csv(save_path + "data" + cluster + ".csv", index=False)
-    print(f"Saved: data{cluster}.csv ({len(df_clean)} sterren)")
+    df.to_csv(save_path + "data " + cluster + ".csv", index=False)
+    print(f"Saved: data {cluster}.csv ({len(df_clean)} sterren)")
 
     # %% Sla variabelen op (gebruik df_clean als werkdataset)
     ra          = df_clean['ra']
